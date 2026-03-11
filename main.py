@@ -60,15 +60,20 @@ def get_all_tasks():
 
 class Task(BaseModel):
     id:int 
-    title: str 
-    completed : bool = False
+    task:str
+    completed : bool = False #defualt value 
 
-task = []
+
+# @app.post("/tasks")
+# def create_task(task: Task):
+#     task.append(task.model_dump())
+
+#     return task 
 
 @app.post("/tasks")
-def create_task(task: Task):
-    task.append(task.model_dump())
+def create_task(task : Task):
+        print(task.model_dump())
+        print(task)
 
-    return task 
-
+        return task.model_dump()
 
