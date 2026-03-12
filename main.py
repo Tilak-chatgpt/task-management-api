@@ -4,76 +4,28 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-# students = {
-#     1:{
-#         "name": "John Doe",
-#         "age": 20,
-#         "course": "Computer Science"
-#     }
-# }
+# DAY 5
+task_db = {}
+task_counter = 0 
+
+# view tasks
+@app.get("/tasks")
+def all_tasks():
+    return task_db
+
+class Tasks(BaseModel):
+    task : str 
+    date : Optional[str] = None
 
 
-@app.get("/") 
-def taskapi(): 
-    return {"message": "Hello World"}
-
-# @app.get("/get-taskapi/{students_id}")
-# def get_students(students_id: int = Path(..., description="The ID should view in the data", gt= 0, lt= 3)):
-#     return students[students_id]
-task = {
-    1:{
-        "TASK 1":"Watch Anime",
-        "TASK 2": "Create a website",
-        "Task 3": "Learn Python",
-        "name" : "John Doe",
-    }, 
-    2:{
-        "TASK 1":"Watch Movie",
-        "TASK 2": "Create a Mobile App",
-        "Task 3": "Learn Java",
-        "name" : "Meena Doe",
-    },
-    3:{
-        "TASK 1":"Watch TV Show",
-        "TASK 2": "Create a Game",
-        "Task 3": "Learn C++",
-        "name" : "Rohit Doe",
-    }
-}
-
-@app.get("/tasks/{task_id}")
-def tasks(task_id: int = Path(..., description="THE TASK IS VISIABLE IN THE SERVER")):
-    return(task[task_id] )
-
-@app.get("/task-by-name/{task_id}") 
-def task_name(name:Optional[str] = None): 
-    for tid in task:
-        if task[tid]["name"] == name:
-            return task[tid]
-    return {"message": "Task not found"}
+@app.post("/tasks/{task_id}")
+def create_task(task_id:int, task:Tasks):
+    global task_counter
+    task_counter+= 1
+    task_db[task_counter] = task.model_dump()
+    return {"id":task_counter, **task.model_dump()}
 
 
-@app.get("/all-tasks")
-def get_all_tasks():
-    return task
 
 
-class Task(BaseModel):
-    id:int 
-    task:str
-    completed : bool = False #defualt value 
-
-
-# @app.post("/tasks")
-# def create_task(task: Task):
-#     task.append(task.model_dump())
-
-#     return task 
-
-@app.post("/tasks")
-def create_task(task : Task):
-        print(task.model_dump())
-        print(task)
-
-        return task.model_dump()
 
